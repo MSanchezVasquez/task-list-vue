@@ -5,6 +5,7 @@
       placeholder="I need to..."
       v-model.trim="newTask"
       :class="{ error: hasError }"
+      @input="clearError"
     />
     <button :disabled="!newTask">Add</button>
     <p v-if="hasError" class="error-msg">
@@ -13,33 +14,35 @@
   </form>
 </template>
 
-<script>
+<script setup>
 import { ref } from "vue";
 import { useTaskStore } from "../stores/taskStore";
 
-export default {
-  setup() {
-    const taskStore = useTaskStore();
+const taskStore = useTaskStore();
 
-    const newTask = ref("");
-    const hasError = ref(false);
+const newTask = ref("");
+const hasError = ref(false);
 
-    const handleSubmit = () => {
-      if (newTask.value.length < 3) {
-        hasError.value = true;
-        return;
-      }
-      hasError.value = false;
+// Micro-optimización: Feedback inmediato
+const clearError = () => {
+  if (hasError.value) hasError.value = false;
+};
 
-      taskStore.addTask({
-        title: newTask.value,
-      });
+const handleSubmit = () => {
+  if (newTask.value.length < 3) {
+    hasError.value = true;
+    return;
+  }
+  hasError.value = false;
 
-      newTask.value = "";
-    };
+  taskStore.addTask({
+    title: newTask.value,
+    isFav: false, // Es buena práctica inicializar todas las propiedades
+    id: crypto.randomUUID(), // <--- RECOMENDACIÓN NATIVA
+  });
 
-    return { handleSubmit, newTask, hasError };
-  },
+  newTask.value = "";
+  hasError.value = false;
 };
 </script>
 

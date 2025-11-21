@@ -1,8 +1,54 @@
+<script setup>
+import TaskDetails from "./components/TaskDetails.vue";
+import { defineAsyncComponent, ref, computed } from "vue";
+import { useTaskStore } from "./stores/taskStore";
+import { storeToRefs } from "pinia";
+
+const TaskForm = defineAsyncComponent(() =>
+  import("./components/TaskForm.vue")
+);
+
+const taskStore = useTaskStore();
+
+const {
+  tasks,
+  loading,
+  favs,
+  totalCount,
+  pendingCount,
+  favCount,
+  completed,
+  completedCount,
+  filteredTasks,
+} = storeToRefs(taskStore);
+
+// fetch tasks
+taskStore.getTasks();
+
+const filter = ref("all");
+
+const sortedTasks = computed(() => {
+  return filteredTasks
+    .value(filter.value)
+    .slice()
+    .sort((a, b) => {
+      if (a.completed === b.completed) return 0;
+      return a.completed ? 1 : -1;
+    });
+});
+</script>
+
 <template>
   <main>
     <!-- heading -->
     <header>
-      <img src="https://pinia.vuejs.org/logo.svg" alt="pinia logo" />
+      <img
+        src="https://pinia.vuejs.org/logo.svg"
+        alt="pinia logo"
+        width="50"
+        height="50"
+        fetchpriority="high"
+      />
       <h1>Pinia Tasks</h1>
     </header>
 
@@ -45,15 +91,7 @@
       </p>
 
       <transition-group name="list" tag="div">
-        <div
-          v-for="task in filteredTasks(filter)
-            .slice()
-            .sort((a, b) => {
-              if (a.completed === b.completed) return 0;
-              return a.completed ? 1 : -1;
-            })"
-          :key="task.id"
-        >
+        <div v-for="task in sortedTasks" :key="task.id">
           <TaskDetails :task="task" />
         </div>
       </transition-group>
@@ -62,53 +100,6 @@
     <!-- <button @click="taskStore.$reset">reset the state</button> -->
   </main>
 </template>
-
-<script>
-import TaskDetails from "./components/TaskDetails.vue";
-import TaskForm from "./components/TaskForm.vue";
-
-import { useTaskStore } from "./stores/taskStore";
-import { ref } from "vue";
-import { storeToRefs } from "pinia";
-
-export default {
-  components: { TaskDetails, TaskForm },
-  setup() {
-    const taskStore = useTaskStore();
-
-    const {
-      tasks,
-      loading,
-      favs,
-      totalCount,
-      pendingCount,
-      favCount,
-      completed,
-      completedCount,
-      filteredTasks,
-    } = storeToRefs(taskStore);
-
-    // fetch tasks
-    taskStore.getTasks();
-
-    const filter = ref("all");
-
-    return {
-      taskStore,
-      filter,
-      tasks,
-      loading,
-      favs,
-      favCount,
-      totalCount,
-      pendingCount,
-      completed,
-      completedCount,
-      filteredTasks,
-    };
-  },
-};
-</script>
 
 <style scoped>
 .empty {
