@@ -49,9 +49,9 @@ const taskStore = useTaskStore();
 
 <style scoped>
 .task-title {
-  font-size: 1.17em; /* Tamaño estándar de h3 */
+  font-size: 1.17em;
   font-weight: bold;
-  cursor: pointer; /* Indica que es clickeable */
+  cursor: pointer;
   user-select: none;
 }
 
@@ -60,20 +60,30 @@ const taskStore = useTaskStore();
   color: #999999a6;
 }
 
-/* Ajuste de iconos dentro de botones */
 .material-icons {
   font-size: 1.4em;
   color: #bbb;
   transition: color 0.2s ease;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  user-select: none;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.material-icons:hover {
+  transform: scale(1.3);
 }
 
 .material-icons.active {
   color: #ff005d;
 }
 
-/* Efecto hover en el botón padre afecta al icono hijo */
 .btn-icon:hover .material-icons {
-  color: #555; /* Un gris más oscuro al pasar el mouse */
+  color: #555;
 }
 .btn-icon:hover .material-icons.active {
   color: #d1004b;

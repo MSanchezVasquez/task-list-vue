@@ -7,7 +7,8 @@ body {
 }
 body,
 * {
-  font-family: "Poppins";
+  font-family: "Poppins", sans-serif;
+  font-display: swap;
 }
 
 /* header */
@@ -36,6 +37,7 @@ header h1 {
 .task-list {
   max-width: 640px;
   margin: 20px auto;
+  min-height: 300px;
 }
 .task-list p {
   display: inline-block;
@@ -75,20 +77,6 @@ header h1 {
 }
 .task .icons {
   text-align: right;
-}
-.task i {
-  font-size: 1.4em;
-  margin-left: 6px;
-  cursor: pointer;
-  color: #bbb;
-  user-select: none;
-  transition: transform 0.2s ease, color 0.2s ease;
-}
-.task i:hover {
-  transform: scale(1.2);
-}
-.task i.active {
-  color: #ff005d;
 }
 
 /*Filter nav*/
