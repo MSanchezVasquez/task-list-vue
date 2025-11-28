@@ -12,9 +12,9 @@ export const useTaskStore = defineStore(
 
     const favs = computed(() => tasks.value.filter((t) => t.isFav));
 
-    const favCount = computed(() => {
-      tasks.value.reduce((p, c) => (c.isFav ? p + 1 : p), 0);
-    });
+    const favCount = computed(() =>
+      tasks.value.reduce((p, c) => (c.isFav ? p + 1 : p), 0)
+    );
 
     const totalCount = computed(() => tasks.value.length);
 
@@ -41,9 +41,24 @@ export const useTaskStore = defineStore(
       try {
         const res = await fetch(API_URL);
         if (!res.ok) throw new Error(res.statusText);
-        tasks.value = await res.json();
+
+        const serverTasks = await res.json();
+
+        // Mantenimiento de tareas ya existentes
+        const localTasks = tasks.value;
+
+        // Merge: se añaden solo las que no existen
+        const merged = [...localTasks];
+
+        for (const st of serverTasks) {
+          if (!merged.find((lt) => lt.id === st.id)) {
+            merged.push(st);
+          }
+        }
+
+        tasks.value = merged;
       } catch (error) {
-        console.error("Error al cargar tareas:", err);
+        console.error("Error al cargar tareas:", error);
       } finally {
         loading.value = false;
       }

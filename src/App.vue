@@ -1,6 +1,6 @@
 <script setup>
 import TaskDetails from "./components/TaskDetails.vue";
-import { defineAsyncComponent, ref, computed } from "vue";
+import { defineAsyncComponent, ref, computed, onMounted } from "vue";
 import { useTaskStore } from "./stores/taskStore";
 import { storeToRefs } from "pinia";
 
@@ -23,7 +23,9 @@ const {
 } = storeToRefs(taskStore);
 
 // fetch tasks
-taskStore.getTasks();
+onMounted(() => {
+  taskStore.getTasks();
+});
 
 const filter = ref("all");
 
